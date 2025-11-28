@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import Icon from '@/components/ui/icon';
-import { ROUTES } from '@/config/routes';
+import { ROUTES } from '@/constants/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addDataSource, removeDataSource, DataSource } from '@/store/agentSlice';
 
@@ -45,7 +45,7 @@ export default function DataUpload() {
   };
 
   const handleContinue = () => {
-    navigate(ROUTES.VALIDATION);
+    navigate(ROUTES.DATA_VALIDATION);
   };
 
   const formatFileSize = (bytes: number = 0) => {
@@ -63,7 +63,7 @@ export default function DataUpload() {
           <div className="mb-8 animate-fade-in">
             <Button 
               variant="ghost" 
-              onClick={() => navigate(ROUTES.SCENARIO_SELECTION)}
+              onClick={() => navigate(ROUTES.SCENARIO_SELECT)}
               className="mb-4"
             >
               <Icon name="ArrowLeft" size={16} className="mr-2" />
@@ -181,7 +181,7 @@ export default function DataUpload() {
           <div className="flex justify-between mt-8">
             <Button 
               variant="outline"
-              onClick={() => navigate(ROUTES.SCENARIO_SELECTION)}
+              onClick={() => navigate(ROUTES.SCENARIO_SELECT)}
             >
               <Icon name="ArrowLeft" className="mr-2" size={16} />
               Назад

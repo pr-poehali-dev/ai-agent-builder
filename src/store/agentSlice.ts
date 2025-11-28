@@ -48,7 +48,32 @@ interface AgentState {
 const initialState: AgentState = {
   currentScenario: null,
   dataSources: [],
-  validationIssues: [],
+  validationIssues: [
+    {
+      id: '1',
+      type: 'contradiction',
+      severity: 'high',
+      description: 'Обнаружено противоречие в сроках доставки: в одном документе указано "3-5 дней", в другом "5-7 рабочих дней"',
+      sources: ['delivery_policy.pdf', 'faq.txt'],
+      status: 'pending',
+    },
+    {
+      id: '2',
+      type: 'duplicate',
+      severity: 'medium',
+      description: 'Информация о возврате товара дублируется в двух разных файлах с идентичным содержанием',
+      sources: ['return_policy.pdf', 'customer_guide.docx'],
+      status: 'pending',
+    },
+    {
+      id: '3',
+      type: 'ambiguity',
+      severity: 'low',
+      description: 'Неясная формулировка в разделе о гарантии: "длительный срок службы" не имеет конкретных временных рамок',
+      sources: ['warranty_info.pdf'],
+      status: 'pending',
+    },
+  ],
   agent: null,
   isLoading: false,
   error: null,
