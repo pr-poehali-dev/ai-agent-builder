@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 import { ROUTES } from '@/config/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setValidationIssues, updateIssueStatus, ValidationIssue } from '@/store/agentSlice';
+import { setValidationIssues, updateValidationIssue, ValidationIssue } from '@/store/agentSlice';
 
 const mockIssues: ValidationIssue[] = [
   {
@@ -16,7 +16,7 @@ const mockIssues: ValidationIssue[] = [
     type: 'contradiction',
     severity: 'high',
     description: 'Противоречивая информация о сроках доставки',
-    fragment: 'В документе 1 указано "доставка 3 дня", в документе 2 - "доставка 7 дней"',
+    sources: ['document1.pdf', 'document2.pdf'],
     status: 'pending',
   },
   {
@@ -24,7 +24,7 @@ const mockIssues: ValidationIssue[] = [
     type: 'duplicate',
     severity: 'medium',
     description: 'Дублирование информации о возврате товаров',
-    fragment: 'Одинаковая информация найдена в 3 разных документах',
+    sources: ['doc1.pdf', 'doc2.pdf', 'doc3.pdf'],
     status: 'pending',
   },
   {
@@ -32,7 +32,7 @@ const mockIssues: ValidationIssue[] = [
     type: 'ambiguity',
     severity: 'medium',
     description: 'Неоднозначная формулировка условий оплаты',
-    fragment: '"Оплата возможна различными способами" - требуется уточнение',
+    sources: ['payment_terms.pdf'],
     status: 'pending',
   },
   {
@@ -40,7 +40,7 @@ const mockIssues: ValidationIssue[] = [
     type: 'contradiction',
     severity: 'low',
     description: 'Различные контактные номера телефонов',
-    fragment: 'Найдено 2 разных номера службы поддержки',
+    sources: ['contact_info.pdf', 'support.txt'],
     status: 'pending',
   },
 ];
@@ -62,7 +62,7 @@ export default function Validation() {
   }, [dispatch]);
 
   const handleIssueAction = (id: string, status: ValidationIssue['status']) => {
-    dispatch(updateIssueStatus({ id, status }));
+    dispatch(updateValidationIssue({ id, status }));
   };
 
   const getSeverityColor = (severity: ValidationIssue['severity']) => {
@@ -84,7 +84,7 @@ export default function Validation() {
   const filteredIssues = validationIssues.filter(issue => {
     if (selectedTab === 'all') return true;
     if (selectedTab === 'pending') return issue.status === 'pending';
-    if (selectedTab === 'resolved') return issue.status === 'fixed' || issue.status === 'approved';
+    if (selectedTab === 'resolved') return issue.status === 'resolved' || issue.status === 'approved';
     return true;
   });
 
@@ -203,8 +203,8 @@ export default function Validation() {
                               </Badge>
                             </div>
                             <h3 className="font-semibold text-lg mb-2">{issue.description}</h3>
-                            <p className="text-gray-600 text-sm bg-gray-50 p-3 rounded-lg">
-                              {issue.fragment}
+                            <p className="text-gray-600 text-sm">
+                              Источники: {issue.sources.join(', ')}
                             </p>
                           </div>
                         </div>
@@ -222,7 +222,7 @@ export default function Validation() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleIssueAction(issue.id, 'fixed')}
+                              onClick={() => handleIssueAction(issue.id, 'resolved')}
                             >
                               <Icon name="Edit" size={16} className="mr-1" />
                               Отметить как исправлено
