@@ -220,7 +220,6 @@ export default function Validation() {
             </TabsContent>
           </Tabs>
 
-        {!isAnalyzing && (
           <div className="flex justify-end">
             <Button 
               size="lg"
@@ -232,6 +231,7 @@ export default function Validation() {
               <Icon name="ArrowRight" size={20} />
             </Button>
           </div>
+        </>
         )}
       </div>
     </CreationLayout>
