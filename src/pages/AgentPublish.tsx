@@ -7,10 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import CreationLayout from '@/components/CreationLayout';
 
 const AgentPublish = () => {
   const navigate = useNavigate();
@@ -48,28 +47,13 @@ const AgentPublish = () => {
   const telegramCode = `https://t.me/YourAgentBot?start=${agent?.id || 'YOUR_AGENT_ID'}`;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-5xl py-12">
-        <div className="mb-8">
-          <div className="mb-6 flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.DATA_VALIDATION)}>
-              <Icon name="ArrowLeft" className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-semibold text-foreground">Публикация агента</h1>
-              <p className="text-muted-foreground">
-                Финальная настройка и развертывание
-              </p>
-            </div>
-          </div>
-
-          <Progress value={100} className="h-2" />
-          <div className="mt-2 flex justify-between text-sm text-muted-foreground">
-            <span>Шаг 3 из 3</span>
-            <span>Публикация</span>
-          </div>
-        </div>
-
+    <CreationLayout
+      step={4}
+      title="Публикация агента"
+      description="Финальная настройка и развертывание"
+      onBack={() => navigate(ROUTES.DATA_VALIDATION)}
+    >
+      <div className="max-w-5xl space-y-6">
         {!isPublished ? (
           <>
             <Card className="mb-8">
@@ -90,7 +74,7 @@ const AgentPublish = () => {
                     />
                   </div>
 
-                  <div className="rounded-lg bg-muted p-4">
+                  <div className="rounded-lg bg-primary/5 p-4 border border-primary/20">
                     <div className="mb-2 flex items-center gap-2">
                       <Icon name="Info" className="h-4 w-4 text-primary" />
                       <p className="font-medium">Сводка</p>
@@ -103,32 +87,29 @@ const AgentPublish = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+          </Card>
 
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => navigate(ROUTES.DATA_VALIDATION)}>
-                <Icon name="ArrowLeft" className="mr-2 h-4 w-4" />
-                Назад
-              </Button>
-              <Button
-                size="lg"
-                onClick={handlePublish}
-                disabled={!agentName.trim() || isPublishing}
-              >
-                {isPublishing ? (
-                  <>
-                    <Icon name="Loader2" className="mr-2 h-5 w-5 animate-spin" />
-                    Публикация...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="Rocket" className="mr-2 h-5 w-5" />
-                    Опубликовать агента
-                  </>
-                )}
-              </Button>
-            </div>
-          </>
+          <div className="flex justify-end">
+            <Button
+              size="lg"
+              onClick={handlePublish}
+              disabled={!agentName.trim() || isPublishing}
+              className="gap-2"
+            >
+              {isPublishing ? (
+                <>
+                  <Icon name="Loader2" className="h-5 w-5 animate-spin" />
+                  Публикация...
+                </>
+              ) : (
+                <>
+                  <Icon name="Rocket" className="h-5 w-5" />
+                  Опубликовать агента
+                </>
+              )}
+            </Button>
+          </div>
+        </>
         ) : (
           <>
             <Card className="mb-8 border-2 border-primary">
@@ -254,20 +235,16 @@ const AgentPublish = () => {
               </CardContent>
             </Card>
 
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => navigate(ROUTES.HOME)}>
-                <Icon name="Home" className="mr-2 h-4 w-4" />
-                На главную
-              </Button>
-              <Button onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
-                Открыть панель агента
-                <Icon name="ArrowRight" className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </>
+          <div className="flex justify-center">
+            <Button size="lg" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)} className="gap-2">
+              Открыть панель агента
+              <Icon name="ArrowRight" className="h-4 w-4" />
+            </Button>
+          </div>
+        </>
         )}
       </div>
-    </div>
+    </CreationLayout>
   );
 };
 

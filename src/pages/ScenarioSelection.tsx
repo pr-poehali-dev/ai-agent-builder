@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import { ROUTES } from '@/config/routes';
+import { ROUTES } from '@/constants/routes';
 import { useAppDispatch } from '@/store/hooks';
 import { setScenario } from '@/store/agentSlice';
+import CreationLayout from '@/components/CreationLayout';
 
 interface Scenario {
   id: string;
@@ -77,88 +78,74 @@ export default function ScenarioSelection() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8 animate-fade-in">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(ROUTES.HOME)}
-              className="mb-4"
+    <CreationLayout
+      step={1}
+      title="Выберите сценарий использования"
+      description="Это поможет настроить агента под ваши задачи"
+      onBack={() => navigate(ROUTES.HOME)}
+    >
+      <div className="space-y-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {scenarios.map((scenario) => (
+            <Card
+              key={scenario.id}
+              className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
+                selectedScenario === scenario.id
+                  ? 'ring-2 ring-primary shadow-lg'
+                  : ''
+              }`}
+              onClick={() => setSelectedScenario(scenario.id)}
             >
-              <Icon name="ArrowLeft" size={16} className="mr-2" />
-              Назад
-            </Button>
-            
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              Выберите сценарий использования
-            </h1>
-            <p className="text-lg text-gray-600">
-              Это поможет настроить агента под ваши задачи
-            </p>
-          </div>
+              {scenario.popular && (
+                <Badge className="mb-3 bg-primary/10 text-primary hover:bg-primary/10 border-0">
+                  Популярно
+                </Badge>
+              )}
+              
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                <Icon name={scenario.icon} className="text-primary" size={24} />
+              </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {scenarios.map((scenario) => (
-              <Card
-                key={scenario.id}
-                className={`p-6 cursor-pointer transition-all hover:shadow-lg ${
-                  selectedScenario === scenario.id
-                    ? 'ring-2 ring-primary shadow-lg'
-                    : 'hover:border-gray-300'
-                }`}
-                onClick={() => setSelectedScenario(scenario.id)}
-              >
-                {scenario.popular && (
-                  <Badge className="mb-3 bg-primary/10 text-primary border-0">
-                    Популярно
-                  </Badge>
-                )}
-                
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                  <Icon name={scenario.icon} className="text-primary" size={24} />
+              <h3 className="font-semibold text-lg mb-2">{scenario.title}</h3>
+              <p className="text-muted-foreground text-sm mb-4">{scenario.description}</p>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground uppercase">Примеры задач:</p>
+                <div className="flex flex-wrap gap-2">
+                  {scenario.examples.map((example, idx) => (
+                    <Badge 
+                      key={idx} 
+                      variant="secondary"
+                      className="text-xs font-normal"
+                    >
+                      {example}
+                    </Badge>
+                  ))}
                 </div>
+              </div>
 
-                <h3 className="font-semibold text-lg mb-2">{scenario.title}</h3>
-                <p className="text-gray-600 text-sm mb-4">{scenario.description}</p>
-
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-gray-500 uppercase">Примеры задач:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {scenario.examples.map((example, idx) => (
-                      <Badge 
-                        key={idx} 
-                        variant="secondary"
-                        className="text-xs font-normal"
-                      >
-                        {example}
-                      </Badge>
-                    ))}
-                  </div>
+              {selectedScenario === scenario.id && (
+                <div className="mt-4 flex items-center text-primary text-sm font-medium">
+                  <Icon name="CheckCircle" size={16} className="mr-2" />
+                  Выбрано
                 </div>
+              )}
+            </Card>
+          ))}
+        </div>
 
-                {selectedScenario === scenario.id && (
-                  <div className="mt-4 flex items-center text-primary text-sm font-medium">
-                    <Icon name="CheckCircle" size={16} className="mr-2" />
-                    Выбрано
-                  </div>
-                )}
-              </Card>
-            ))}
-          </div>
-
-          <div className="flex justify-end">
-            <Button 
-              size="lg"
-              disabled={!selectedScenario}
-              onClick={handleContinue}
-            >
-              Продолжить
-              <Icon name="ArrowRight" className="ml-2" size={20} />
-            </Button>
-          </div>
+        <div className="flex justify-end">
+          <Button 
+            size="lg"
+            disabled={!selectedScenario}
+            onClick={handleContinue}
+            className="gap-2"
+          >
+            Продолжить
+            <Icon name="ArrowRight" size={20} />
+          </Button>
         </div>
       </div>
-    </div>
+    </CreationLayout>
   );
 }

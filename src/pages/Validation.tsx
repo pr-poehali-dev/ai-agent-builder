@@ -6,9 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
-import { ROUTES } from '@/config/routes';
+import { ROUTES } from '@/constants/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setValidationIssues, updateValidationIssue, ValidationIssue } from '@/store/agentSlice';
+import CreationLayout from '@/components/CreationLayout';
 
 const mockIssues: ValidationIssue[] = [
   {
@@ -92,177 +93,148 @@ export default function Validation() {
   const resolvedCount = validationIssues.filter(i => i.status !== 'pending').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-8 animate-fade-in">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(ROUTES.DATA_UPLOAD)}
-              className="mb-4"
-            >
-              <Icon name="ArrowLeft" size={16} className="mr-2" />
-              Назад
-            </Button>
-            
-            <div className="flex items-center gap-3 mb-4">
-              <Badge variant="outline" className="text-sm">
-                Шаг 3 из 4
-              </Badge>
-              <Progress value={75} className="flex-1 max-w-xs" />
+    <CreationLayout
+      step={3}
+      title="Валидация данных"
+      description="Проверьте найденные проблемы и утвердите корректность данных"
+      onBack={() => navigate(ROUTES.DATA_UPLOAD)}
+    >
+      <div className="max-w-5xl space-y-6">
+        {isAnalyzing ? (
+          <Card className="p-12">
+            <div className="text-center space-y-6">
+              <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto animate-pulse">
+                <Icon name="Search" className="text-primary" size={40} />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Анализируем ваши данные</h3>
+                <p className="text-muted-foreground">
+                  ИИ проверяет документы на противоречия и неточности...
+                </p>
+              </div>
+              <Progress value={60} className="max-w-xs mx-auto" />
             </div>
-
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              Валидация данных
-            </h1>
-            <p className="text-lg text-gray-600">
-              Проверьте найденные проблемы и утвердите корректность данных
-            </p>
-          </div>
-
-          {isAnalyzing ? (
-            <Card className="p-12">
-              <div className="text-center space-y-6">
-                <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto animate-pulse">
-                  <Icon name="Search" className="text-primary" size={40} />
+          </Card>
+        ) : (
+            <>
+          <div className="grid grid-cols-3 gap-4">
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Icon name="AlertCircle" className="text-primary" size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Анализируем ваши данные</h3>
-                  <p className="text-gray-600">
-                    ИИ проверяет документы на противоречия и неточности...
-                  </p>
+                  <p className="text-2xl font-bold">{validationIssues.length}</p>
+                  <p className="text-sm text-muted-foreground">Всего найдено</p>
                 </div>
-                <Progress value={60} className="max-w-xs mx-auto" />
               </div>
             </Card>
-          ) : (
-            <>
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <Card className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Icon name="AlertCircle" className="text-blue-600" size={20} />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{validationIssues.length}</p>
-                      <p className="text-sm text-gray-600">Всего найдено</p>
-                    </div>
-                  </div>
-                </Card>
 
-                <Card className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                      <Icon name="Clock" className="text-yellow-600" size={20} />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{pendingCount}</p>
-                      <p className="text-sm text-gray-600">Требует действия</p>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Icon name="CheckCircle" className="text-green-600" size={20} />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{resolvedCount}</p>
-                      <p className="text-sm text-gray-600">Решено</p>
-                    </div>
-                  </div>
-                </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center">
+                  <Icon name="Clock" className="text-yellow-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{pendingCount}</p>
+                  <p className="text-sm text-muted-foreground">Требует действия</p>
+                </div>
               </div>
+            </Card>
 
-              <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-                <TabsList className="mb-6">
-                  <TabsTrigger value="all">
-                    Все ({validationIssues.length})
-                  </TabsTrigger>
-                  <TabsTrigger value="pending">
-                    Требуют внимания ({pendingCount})
-                  </TabsTrigger>
-                  <TabsTrigger value="resolved">
-                    Решенные ({resolvedCount})
-                  </TabsTrigger>
-                </TabsList>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                  <Icon name="CheckCircle" className="text-green-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{resolvedCount}</p>
+                  <p className="text-sm text-muted-foreground">Решено</p>
+                </div>
+              </div>
+            </Card>
+          </div>
 
-                <TabsContent value={selectedTab} className="space-y-4">
-                  {filteredIssues.map((issue) => (
-                    <Card key={issue.id} className="p-6">
-                      <div className="space-y-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <Badge variant="outline" className={getSeverityColor(issue.severity)}>
-                                {getTypeLabel(issue.type)}
-                              </Badge>
-                              <Badge variant="outline">
-                                {issue.severity === 'high' ? 'Высокий' : issue.severity === 'medium' ? 'Средний' : 'Низкий'} приоритет
-                              </Badge>
-                            </div>
-                            <h3 className="font-semibold text-lg mb-2">{issue.description}</h3>
-                            <p className="text-gray-600 text-sm">
-                              Источники: {issue.sources.join(', ')}
-                            </p>
-                          </div>
+          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+            <TabsList>
+              <TabsTrigger value="all">
+                Все ({validationIssues.length})
+              </TabsTrigger>
+              <TabsTrigger value="pending">
+                Требуют внимания ({pendingCount})
+              </TabsTrigger>
+              <TabsTrigger value="resolved">
+                Решенные ({resolvedCount})
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={selectedTab} className="space-y-4 mt-6">
+              {filteredIssues.map((issue) => (
+                <Card key={issue.id} className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge variant="outline" className={getSeverityColor(issue.severity)}>
+                            {getTypeLabel(issue.type)}
+                          </Badge>
+                          <Badge variant="outline">
+                            {issue.severity === 'high' ? 'Высокий' : issue.severity === 'medium' ? 'Средний' : 'Низкий'} приоритет
+                          </Badge>
                         </div>
-
-                        {issue.status === 'pending' ? (
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleIssueAction(issue.id, 'approved')}
-                            >
-                              <Icon name="Check" size={16} className="mr-1" />
-                              Подтвердить корректность
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleIssueAction(issue.id, 'resolved')}
-                            >
-                              <Icon name="Edit" size={16} className="mr-1" />
-                              Отметить как исправлено
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
-                            <Icon name="CheckCircle" size={16} />
-                            {issue.status === 'approved' ? 'Подтверждено' : 'Исправлено'}
-                          </div>
-                        )}
+                        <h3 className="font-semibold text-lg mb-2">{issue.description}</h3>
+                        <p className="text-muted-foreground text-sm">
+                          Источники: {issue.sources.join(', ')}
+                        </p>
                       </div>
-                    </Card>
-                  ))}
-                </TabsContent>
-              </Tabs>
-            </>
-          )}
+                    </div>
+
+                    {issue.status === 'pending' ? (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleIssueAction(issue.id, 'approved')}
+                        >
+                          <Icon name="Check" size={16} className="mr-1" />
+                          Подтвердить корректность
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleIssueAction(issue.id, 'resolved')}
+                        >
+                          <Icon name="Edit" size={16} className="mr-1" />
+                          Отметить как исправлено
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+                        <Icon name="CheckCircle" size={16} />
+                        {issue.status === 'approved' ? 'Подтверждено' : 'Исправлено'}
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </TabsContent>
+          </Tabs>
 
           {!isAnalyzing && (
-            <div className="flex justify-between mt-8">
-              <Button 
-                variant="outline"
-                onClick={() => navigate(ROUTES.DATA_UPLOAD)}
-              >
-                <Icon name="ArrowLeft" className="mr-2" size={16} />
-                Назад
-              </Button>
+            <div className="flex justify-end">
               <Button 
                 size="lg"
                 disabled={pendingCount > 0}
-                onClick={() => navigate(ROUTES.PUBLISH)}
+                onClick={() => navigate(ROUTES.AGENT_PUBLISH)}
+                className="gap-2"
               >
                 Опубликовать агента
-                <Icon name="ArrowRight" className="ml-2" size={20} />
+                <Icon name="ArrowRight" size={20} />
               </Button>
             </div>
           )}
-        </div>
+        )}
       </div>
-    </div>
+    </CreationLayout>
   );
 }
