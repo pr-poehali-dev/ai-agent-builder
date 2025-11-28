@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from 'react-redux';
-import { store } from '@/store';
+import { store } from '@/store/store';
 import { ROUTES } from "@/constants/routes";
 import Home from "./pages/Home";
 import ScenarioSelection from "./pages/ScenarioSelection";
