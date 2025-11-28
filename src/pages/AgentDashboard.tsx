@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setAgents, deleteAgent, Agent } from '@/store/agentSlice';
@@ -7,11 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import Sidebar from '@/components/Sidebar';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { agents } = useAppSelector((state) => state.agent);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const mockAgents: Agent[] = [
@@ -115,20 +118,36 @@ const AgentDashboard = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-7xl py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold text-foreground">Панель управления</h1>
-            <p className="text-muted-foreground">Управляйте вашими ИИ-агентами</p>
-          </div>
-          <Button size="lg" onClick={() => navigate(ROUTES.SCENARIO_SELECT)}>
-            <Icon name="Plus" className="mr-2 h-5 w-5" />
-            Создать агента
+    <div className="flex min-h-screen bg-background">
+      <Sidebar isCollapsed={sidebarCollapsed} />
+      
+      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="rounded-lg"
+          >
+            <Icon name={sidebarCollapsed ? 'PanelLeft' : 'PanelLeftClose'} size={20} />
           </Button>
-        </div>
+          
+          <ThemeToggle />
+        </header>
 
-        <div className="mb-8 grid gap-6 md:grid-cols-4">
+        <main className="container max-w-7xl py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Панель управления</h1>
+              <p className="text-muted-foreground">Управляйте вашими ИИ-агентами</p>
+            </div>
+            <Button size="lg" onClick={() => navigate(ROUTES.SCENARIO_SELECT)} className="gap-2">
+              <Icon name="Plus" size={20} />
+              Создать агента
+            </Button>
+          </div>
+
+          <div className="mb-8 grid gap-6 md:grid-cols-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
@@ -184,10 +203,10 @@ const AgentDashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </div>
 
-        <div>
-          <h2 className="mb-4 text-xl font-semibold">Ваши агенты</h2>
+          <div>
+            <h2 className="mb-4 text-xl font-semibold">Ваши агенты</h2>
           {agents.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
@@ -268,7 +287,8 @@ const AgentDashboard = () => {
               ))}
             </div>
           )}
-        </div>
+          </div>
+        </main>
       </div>
     </div>
   );

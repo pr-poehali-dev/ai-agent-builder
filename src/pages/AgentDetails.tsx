@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import Icon from '@/components/ui/icon';
+import Sidebar from '@/components/Sidebar';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +20,7 @@ const AgentDetails = () => {
   const dispatch = useAppDispatch();
   const agent = useAppSelector((state) => state.agent.agents.find((a) => a.id === id));
   const [isEditing, setIsEditing] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   if (!agent) {
     return (
@@ -62,13 +65,29 @@ const AgentDetails = () => {
   const maxRequests = Math.max(...chartData.map((d) => d.requests));
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
-              <Icon name="ArrowLeft" className="h-5 w-5" />
-            </Button>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar isCollapsed={sidebarCollapsed} />
+      
+      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="rounded-lg"
+          >
+            <Icon name={sidebarCollapsed ? 'PanelLeft' : 'PanelLeftClose'} size={20} />
+          </Button>
+          
+          <ThemeToggle />
+        </header>
+
+        <main className="container max-w-6xl py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
+                <Icon name="ArrowLeft" className="h-5 w-5" />
+              </Button>
             <div>
               <h1 className="text-3xl font-semibold text-foreground">{agent.name}</h1>
               <p className="text-muted-foreground">
@@ -362,6 +381,7 @@ const AgentDetails = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        </main>
       </div>
     </div>
   );
