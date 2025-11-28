@@ -11,7 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import Icon from '@/components/ui/icon';
-import Sidebar from '@/components/Sidebar';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDetails = () => {
@@ -20,7 +19,7 @@ const AgentDetails = () => {
   const dispatch = useAppDispatch();
   const agent = useAppSelector((state) => state.agent.agents.find((a) => a.id === id));
   const [isEditing, setIsEditing] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
 
   if (!agent) {
     return (
@@ -65,24 +64,28 @@ const AgentDetails = () => {
   const maxRequests = Math.max(...chartData.map((d) => d.requests));
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar isCollapsed={sidebarCollapsed} />
-      
-      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="rounded-lg"
-          >
-            <Icon name={sidebarCollapsed ? 'PanelLeft' : 'PanelLeftClose'} size={20} />
-          </Button>
-          
-          <ThemeToggle />
-        </header>
+    <div className="min-h-screen bg-background">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm">
+        <div className="container mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
+              <Icon name="ArrowLeft" className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(ROUTES.HOME)}>
+              <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+                <Icon name="Sparkles" className="text-primary-foreground" size={16} />
+              </div>
+              <span className="text-lg font-semibold">Agent</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
 
-        <main className="container max-w-6xl py-8">
+      <main className="pt-14">
+        <div className="container mx-auto max-w-7xl px-6 py-8">
           <div className="mb-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>

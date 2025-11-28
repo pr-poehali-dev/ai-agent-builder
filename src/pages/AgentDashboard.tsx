@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setAgents, deleteAgent, Agent } from '@/store/agentSlice';
@@ -7,14 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import Sidebar from '@/components/Sidebar';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const AgentDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { agents } = useAppSelector((state) => state.agent);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const mockAgents: Agent[] = [
@@ -118,178 +116,140 @@ const AgentDashboard = () => {
     : 0;
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar isCollapsed={sidebarCollapsed} />
-      
-      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="rounded-lg"
-          >
-            <Icon name={sidebarCollapsed ? 'PanelLeft' : 'PanelLeftClose'} size={20} />
-          </Button>
-          
-          <ThemeToggle />
-        </header>
-
-        <main className="container max-w-7xl py-8">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Панель управления</h1>
-              <p className="text-muted-foreground">Управляйте вашими ИИ-агентами</p>
+    <div className="min-h-screen bg-background">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm">
+        <div className="container mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(ROUTES.HOME)}>
+            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+              <Icon name="Sparkles" className="text-primary-foreground" size={16} />
             </div>
-            <Button size="lg" onClick={() => navigate(ROUTES.SCENARIO_SELECT)} className="gap-2">
-              <Icon name="Plus" size={20} />
-              Создать агента
-            </Button>
+            <span className="text-lg font-semibold">Agent</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+        <main className="pt-14">
+        <div className="container mx-auto max-w-7xl px-6 py-12">
+          <div className="mb-12 text-center space-y-4">
+            <h1 className="text-4xl font-bold">Ваши агенты</h1>
+            <p className="text-muted-foreground text-lg">Управляйте ИИ-ассистентами из одного места</p>
           </div>
 
-          <div className="mb-8 grid gap-6 md:grid-cols-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Всего агентов</p>
-                  <p className="text-3xl font-semibold">{agents.length}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                  <Icon name="Bot" className="h-6 w-6 text-primary" />
-                </div>
+          {agents.length > 0 && (
+            <div className="mb-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              <div className="text-center p-4 rounded-xl bg-card border">
+                <div className="text-2xl font-bold">{agents.length}</div>
+                <div className="text-sm text-muted-foreground">Всего</div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Активных</p>
-                  <p className="text-3xl font-semibold">{activeAgents}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
-                  <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
-                </div>
+              <div className="text-center p-4 rounded-xl bg-card border">
+                <div className="text-2xl font-bold text-green-600">{activeAgents}</div>
+                <div className="text-sm text-muted-foreground">Активных</div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Всего запросов</p>
-                  <p className="text-3xl font-semibold">{totalRequests.toLocaleString()}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                  <Icon name="MessageSquare" className="h-6 w-6 text-blue-600" />
-                </div>
+              <div className="text-center p-4 rounded-xl bg-card border">
+                <div className="text-2xl font-bold">{totalRequests.toLocaleString()}</div>
+                <div className="text-sm text-muted-foreground">Запросов</div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Удовлетворённость</p>
-                  <p className="text-3xl font-semibold">{avgSatisfaction}%</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-                  <Icon name="Star" className="h-6 w-6 text-amber-600" />
-                </div>
+              <div className="text-center p-4 rounded-xl bg-card border">
+                <div className="text-2xl font-bold">{avgSatisfaction}%</div>
+                <div className="text-sm text-muted-foreground">Довольны</div>
               </div>
-            </CardContent>
-          </Card>
-          </div>
+            </div>
+          )}
 
-          <div>
-            <h2 className="mb-4 text-xl font-semibold">Ваши агенты</h2>
           {agents.length === 0 ? (
-            <Card>
-              <CardContent className="py-16 text-center">
-                <Icon name="Bot" className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-medium">У вас пока нет агентов</h3>
-                <p className="mb-6 text-muted-foreground">
-                  Создайте своего первого ИИ-агента за несколько минут
-                </p>
-                <Button onClick={() => navigate(ROUTES.SCENARIO_SELECT)}>
-                  <Icon name="Plus" className="mr-2 h-4 w-4" />
-                  Создать первого агента
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="max-w-md mx-auto text-center py-16">
+              <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10">
+                <Icon name="Bot" className="h-10 w-10 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-3">Создайте первого агента</h2>
+              <p className="text-muted-foreground mb-8 text-lg">
+                Займёт всего несколько минут
+              </p>
+              <Button size="lg" onClick={() => navigate(ROUTES.SCENARIO_SELECT)} className="px-8 h-12 rounded-xl">
+                <Icon name="Plus" className="mr-2 h-5 w-5" />
+                Создать агента
+              </Button>
+            </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {agents.map((agent) => (
-                <Card
-                  key={agent.id}
-                  className="cursor-pointer transition-all hover:shadow-lg"
-                  onClick={() => navigate(`/agent/${agent.id}`)}
+            <>
+              <div className="flex justify-center mb-8">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate(ROUTES.SCENARIO_SELECT)} 
+                  className="px-8 h-12 rounded-xl"
                 >
-                  <CardHeader>
-                    <div className="mb-3 flex items-start justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                        <Icon name={getScenarioIcon(agent.scenario)} className="h-6 w-6 text-primary" />
-                      </div>
-                      {getStatusBadge(agent.status)}
-                    </div>
-                    <CardTitle className="line-clamp-1">{agent.name}</CardTitle>
-                    <CardDescription>
-                      Создан {new Date(agent.createdAt).toLocaleDateString('ru-RU')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Запросов</span>
-                        <span className="font-medium">{agent.stats?.totalRequests.toLocaleString() || 0}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Сегодня</span>
-                        <span className="font-medium">{agent.stats?.requestsToday || 0}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Время ответа</span>
-                        <span className="font-medium">{agent.stats?.avgResponseTime.toFixed(1)}s</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Оценка</span>
-                        <span className="font-medium">{agent.stats?.satisfactionRate}%</span>
-                      </div>
+                  <Icon name="Plus" className="mr-2 h-5 w-5" />
+                  Создать агента
+                </Button>
+              </div>
 
-                      <div className="flex gap-2 pt-3">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {agents.map((agent) => (
+                  <Card
+                    key={agent.id}
+                    className="cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 border-2 hover:border-primary/50 overflow-hidden group"
+                    onClick={() => navigate(`/agent/${agent.id}`)}
+                  >
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                          <Icon name={getScenarioIcon(agent.scenario)} className="h-7 w-7 text-primary" />
+                        </div>
+                        {getStatusBadge(agent.status)}
+                      </div>
+                      <CardTitle className="text-xl leading-tight">{agent.name}</CardTitle>
+                      <CardDescription className="text-sm">
+                        {new Date(agent.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {agent.stats && (
+                        <div className="grid grid-cols-3 gap-3 pb-4 border-b">
+                          <div className="text-center">
+                            <p className="text-2xl font-bold">{agent.stats.totalRequests.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground">запросов</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold">{agent.stats.requestsToday}</p>
+                            <p className="text-xs text-muted-foreground">сегодня</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold">{agent.stats.satisfactionRate}%</p>
+                            <p className="text-xs text-muted-foreground">довольны</p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex gap-2">
                         <Button
-                          size="sm"
                           variant="outline"
+                          size="sm"
                           className="flex-1"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/agent/${agent.id}`);
                           }}
                         >
-                          <Icon name="Settings" className="mr-2 h-4 w-4" />
-                          Настройки
+                          Открыть
                         </Button>
                         <Button
+                          variant="ghost"
                           size="sm"
-                          variant="outline"
                           onClick={(e) => handleDeleteAgent(agent.id, e)}
                         >
                           <Icon name="Trash2" className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
-          </div>
+        </div>
         </main>
-      </div>
     </div>
   );
 };
