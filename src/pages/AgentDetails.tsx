@@ -91,14 +91,14 @@ const AgentDetails = () => {
               <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
                 <Icon name="ArrowLeft" className="h-5 w-5" />
               </Button>
-            <div>
-              <h1 className="text-3xl font-semibold text-foreground">{agent.name}</h1>
-              <p className="text-muted-foreground">
-                Создан {new Date(agent.createdAt).toLocaleDateString('ru-RU')}
-              </p>
+              <div>
+                <h1 className="text-3xl font-semibold text-foreground">{agent.name}</h1>
+                <p className="text-muted-foreground">
+                  Создан {new Date(agent.createdAt).toLocaleDateString('ru-RU')}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
             <Badge
               className={
                 agent.status === 'published'
@@ -384,8 +384,8 @@ const AgentDetails = () => {
             </Card>
           </TabsContent>
         </Tabs>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
