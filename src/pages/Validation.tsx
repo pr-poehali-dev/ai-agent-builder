@@ -220,19 +220,18 @@ export default function Validation() {
             </TabsContent>
           </Tabs>
 
-          {!isAnalyzing && (
-            <div className="flex justify-end">
-              <Button 
-                size="lg"
-                disabled={pendingCount > 0}
-                onClick={() => navigate(ROUTES.AGENT_PUBLISH)}
-                className="gap-2"
-              >
-                Опубликовать агента
-                <Icon name="ArrowRight" size={20} />
-              </Button>
-            </div>
-          )}
+        {!isAnalyzing && (
+          <div className="flex justify-end">
+            <Button 
+              size="lg"
+              disabled={pendingCount > 0}
+              onClick={() => navigate(ROUTES.AGENT_PUBLISH)}
+              className="gap-2"
+            >
+              Опубликовать агента
+              <Icon name="ArrowRight" size={20} />
+            </Button>
+          </div>
         )}
       </div>
     </CreationLayout>
