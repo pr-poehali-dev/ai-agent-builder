@@ -2,13 +2,25 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { ROUTES } from '@/config/routes';
+import { ROUTES } from '@/constants/routes';
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <header className="border-b bg-white/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icon name="Bot" className="text-primary" size={32} />
+            <span className="text-xl font-semibold">AI Agent Builder</span>
+          </div>
+          <Button variant="outline" onClick={() => navigate(ROUTES.AGENT_DASHBOARD)}>
+            <Icon name="LayoutDashboard" className="mr-2 h-4 w-4" />
+            Мои агенты
+          </Button>
+        </div>
+      </header>
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
           <div className="space-y-4">
@@ -56,7 +68,7 @@ export default function Home() {
           <Button 
             size="lg" 
             className="mt-8 px-8 py-6 text-lg"
-            onClick={() => navigate(ROUTES.SCENARIO_SELECTION)}
+            onClick={() => navigate(ROUTES.SCENARIO_SELECT)}
           >
             Создать ИИ-агента
             <Icon name="ArrowRight" className="ml-2" size={20} />

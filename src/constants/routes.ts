@@ -5,4 +5,5 @@ export const ROUTES = {
   DATA_VALIDATION: '/validation',
   AGENT_PUBLISH: '/publish',
   AGENT_DASHBOARD: '/dashboard',
+  AGENT_DETAILS: '/agent/:id',
 } as const;

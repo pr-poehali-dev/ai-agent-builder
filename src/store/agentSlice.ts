@@ -25,6 +25,13 @@ export interface Scenario {
   icon: string;
 }
 
+export interface AgentStats {
+  totalRequests: number;
+  requestsToday: number;
+  avgResponseTime: number;
+  satisfactionRate: number;
+}
+
 export interface Agent {
   id: string;
   name: string;
@@ -33,6 +40,7 @@ export interface Agent {
   apiKey?: string;
   createdAt: string;
   dataSources: DataSource[];
+  stats?: AgentStats;
 }
 
 interface AgentState {
@@ -40,6 +48,7 @@ interface AgentState {
   dataSources: DataSource[];
   validationIssues: ValidationIssue[];
   agent: Agent | null;
+  agents: Agent[];
   isLoading: boolean;
   error: string | null;
   currentStep: number;
@@ -48,6 +57,7 @@ interface AgentState {
 const initialState: AgentState = {
   currentScenario: null,
   dataSources: [],
+  agents: [],
   validationIssues: [
     {
       id: '1',
@@ -112,6 +122,30 @@ const agentSlice = createSlice({
     },
     setAgent: (state, action: PayloadAction<Agent>) => {
       state.agent = action.payload;
+      const existingIndex = state.agents.findIndex(a => a.id === action.payload.id);
+      if (existingIndex !== -1) {
+        state.agents[existingIndex] = action.payload;
+      } else {
+        state.agents.push(action.payload);
+      }
+    },
+    setAgents: (state, action: PayloadAction<Agent[]>) => {
+      state.agents = action.payload;
+    },
+    updateAgentStatus: (state, action: PayloadAction<{ id: string; status: Agent['status'] }>) => {
+      const agent = state.agents.find(a => a.id === action.payload.id);
+      if (agent) {
+        agent.status = action.payload.status;
+      }
+      if (state.agent?.id === action.payload.id) {
+        state.agent.status = action.payload.status;
+      }
+    },
+    deleteAgent: (state, action: PayloadAction<string>) => {
+      state.agents = state.agents.filter(a => a.id !== action.payload);
+      if (state.agent?.id === action.payload) {
+        state.agent = null;
+      }
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -135,6 +169,9 @@ export const {
   setValidationIssues,
   updateValidationIssue,
   setAgent,
+  setAgents,
+  updateAgentStatus,
+  deleteAgent,
   setLoading,
   setError,
   setCurrentStep,
